@@ -1,9 +1,7 @@
-// On utilise le fetch de node pour Node.js >= 18
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const BASE_URL = 'http://localhost:3000';
 
-// Fonction utilitaire pour faire des requêtes avec fetch
 async function makeRequest(method, path, data = null) {
     const options = {
         method,
@@ -32,12 +30,10 @@ async function runTests() {
     try {
         console.log("Démarrage des tests...\n");
 
-        // Test GET /tasks
         console.log("Test 1: GET /tasks");
         const initialTasks = await makeRequest('GET', '/tasks');
         console.log("✓ Liste des tâches récupérée avec succès");
 
-        // Test POST /new-task
         console.log("\nTest 2: POST /new-task");
         const newTask = {
             title: "Nouvelle tâche de test",
@@ -48,7 +44,6 @@ async function runTests() {
         console.log("✓ Nouvelle tâche créée avec succès");
         const taskId = createdTask.id;
 
-        // Test PUT /update-task/:id
         console.log("\nTest 3: PUT /update-task/:id");
         const updatedData = {
             isDone: true
@@ -56,7 +51,6 @@ async function runTests() {
         await makeRequest('PUT', `/update-task/${taskId}`, updatedData);
         console.log("✓ Tâche mise à jour avec succès");
 
-        // Vérification de la mise à jour
         const tasks = await makeRequest('GET', '/tasks');
         const updatedTask = tasks.find(task => task.id === taskId);
         if (!updatedTask || updatedTask.isDone !== true) {
@@ -64,12 +58,10 @@ async function runTests() {
         }
         console.log("✓ Mise à jour vérifiée avec succès");
 
-        // Test DELETE /delete-task/:id
         console.log("\nTest 4: DELETE /delete-task/:id");
         await makeRequest('DELETE', `/delete-task/${taskId}`);
         console.log("✓ Tâche supprimée avec succès");
 
-        // Vérification de la suppression
         const finalTasks = await makeRequest('GET', '/tasks');
         if (finalTasks.some(task => task.id === taskId)) {
             throw new Error("La tâche n'a pas été supprimée correctement");

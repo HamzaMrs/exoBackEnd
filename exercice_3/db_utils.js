@@ -1,7 +1,9 @@
+// db_utils.js
+// Utilitaires pour la connexion PostgreSQL et gestion des utilisateurs
 
-require('dotenv').config();
 const { Client } = require('pg');
 
+// Crée et retourne un client PostgreSQL
 function getConnection(user, password, database) {
   return new Client({
     host: 'localhost',
@@ -12,11 +14,12 @@ function getConnection(user, password, database) {
   });
 }
 
+// Récupère tous les utilisateurs (table users)
 function getUsers(callback) {
   const client = getConnection(
-    process.env.DBUSER || process.env.dbuser,
-    process.env.DBPWD || process.env.dbpwd,
-    process.env.DBNAME || process.env.dbname || 'mabase'
+    process.env.dbuser,
+    process.env.dbpwd,
+    process.env.dbname || 'mabase'
   );
   client.connect()
     .then(() => client.query('SELECT * FROM users'))
@@ -30,11 +33,12 @@ function getUsers(callback) {
     });
 }
 
+// Insère un utilisateur (objet {email})
 function insert_user(user, callback) {
   const client = getConnection(
-    process.env.DBUSER || process.env.dbuser,
-    process.env.DBPWD || process.env.dbpwd,
-    process.env.DBNAME || process.env.dbname || 'mabase'
+    process.env.dbuser,
+    process.env.dbpwd,
+    process.env.dbname || 'mabase'
   );
   client.connect()
     .then(() => client.query('INSERT INTO users(email) VALUES($1) RETURNING *', [user.email]))
